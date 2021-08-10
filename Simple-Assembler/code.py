@@ -1,4 +1,7 @@
 #starter-code
+#first change added
+from sys import stdin
+
 def getRegister(token, flag) :
 
 	if token =="R0":
@@ -35,7 +38,8 @@ var_list = []
 
 while True:
 	line = input()
-	if line == '':
+
+	if line == '': # If empty string is read then stop the loop
 		break
 	lines.append(line)
 	
@@ -50,8 +54,16 @@ for line in lines:
 
 for line in lines[len(var_list) : ]:
 
-	
 	line = list(line.split(" "))
+
+	if line[0] == 'add' :
+		ans += "00000" + "00" #unused bits added
+		if (getRegister(line[1], False) == '999' or getRegister(line[1], False) == '999' or getRegister(line[1], False) == '999') :
+			print("Invalid register name")
+			quit()
+		x = getRegister(line[1], False) + getRegister(line[2], False) + getRegister(line[3], False)
+		ans += x
+
 	if line[0] == 'ld' :
 		ans += "00100"
 		x = getRegister(line[1], False) 
@@ -66,7 +78,7 @@ for line in lines[len(var_list) : ]:
 				quit()
 
 		else :
-			print("Typo in register name")
+			print("Invalid register name")
 			quit()
 
 	if (line[0] == 'st') :
