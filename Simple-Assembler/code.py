@@ -1,30 +1,11 @@
-#starter-code
-#first change added
+
 from sys import stdin
 
 def getRegister(token, flag) :
 
-	if token =="R0":
-		ans = "000"
-
-	elif token=="R1":
-		ans = "001"
-
-	elif token=="R2":
-		ans = "010"
-
-	elif token=="R3":
-		ans = "011"
-
-	elif token=="R4":
-		ans = "100"
-
-	elif token=="R5":
-		ans = "101"
-
-	elif token=="R6":
-		ans = "110"
-
+	if int(token[1]) in range(7) and token[0]=="R":
+		ans = str(f'{int(token[1]):03b}')
+	
 	elif token=="FLAGS" and flag:
 		ans = "111"
   
@@ -35,10 +16,11 @@ def getRegister(token, flag) :
 
 lines = []
 var_list = []
+a_commands = {'add': "00000",'sub': "00001", 'mul': "00110", 'xor': "01010", 'or': "01011", 'and': "01100"}
+d_commands = {'ld': "00100", 'st': "00101"}
 
-while True:
+while True :
 	line = input()
-
 	if line == '': # If empty string is read then stop the loop
 		break
 	lines.append(line)
@@ -56,16 +38,18 @@ for line in lines[len(var_list) : ]:
 
 	line = list(line.split(" "))
 
-	if line[0] == 'add' :
-		ans += "00000" + "00" #unused bits added
+	if line[0] in a_commands :
+
+		ans += a_commands[line[0]] + "00" #unused bits added
+
 		if (getRegister(line[1], False) == '999' or getRegister(line[1], False) == '999' or getRegister(line[1], False) == '999') :
 			print("Invalid register name")
 			quit()
 		x = getRegister(line[1], False) + getRegister(line[2], False) + getRegister(line[3], False)
 		ans += x
 
-	if line[0] == 'ld' :
-		ans += "00100"
+	if line[0] in d_commands :
+		ans += d_commands[line[0]]
 		x = getRegister(line[1], False) 
 		if x!="999" :
 			ans += x
@@ -79,23 +63,6 @@ for line in lines[len(var_list) : ]:
 
 		else :
 			print("Invalid register name")
-			quit()
-
-	if (line[0] == 'st') :
-		ans += "00101" 
-		x = getRegister(line[1], False) 
-		if x!="999" :
-			ans += x
-			if line[2] in var_list :
-				n = var_list.index(line[2]) + len(lines) - len(var_list)
-				ans += str(f'{n:08b}')
-				
-			else:
-				print("Use of undefined variable")
-				quit()
-
-		else :
-			print("Typo in register name")
 			quit()
 
 	print(ans)
