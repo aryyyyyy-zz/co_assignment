@@ -1,20 +1,26 @@
 
 from sys import stdin
 
-def getRegister(token, flag) :
+def getRegister(token, flagsMod) :
 
 	if int(token[1]) in range(7) and token[0]=="R":
 		ans = str(f'{int(token[1]):03b}')
 	
-	elif token=="FLAGS" and flag:
-		ans = "111"
+	elif token == "FLAGS" :
+
+		if flagsMod:
+			ans = "111"
+
+		else :
+			print("ERROR: Illegal use of flags register")
+			quit()
   
 	else :
 		ans = "999"
 
 	return ans
 
-lines = []
+input_lines = []
 var_list = []
 flag = False
 a_commands = {'add': "00000",'sub': "00001", 'mul': "00110", 'xor': "01010", 'or': "01011", 'and': "01100"}
@@ -24,20 +30,27 @@ f_commands = {"hlt": "10011"}
 for line in stdin:
 	if line == '': # If empty string is read then stop the loop
 		break
-	lines.append(line)
+	input_lines.append(line)
 	
 ans = ""
 
-for line in lines:
+for line in input_lines:
 	line = list(line.split(" "))
+
 	if line[0] == 'var':
+
+		if len(line) != 2 :
+			print("Invalid syntax")
+			quit()
+
 		var_list.append(line[1])
+
 	else:
 		break
 
-for line in lines[len(var_list) : ]:
+for line in input_lines[len(var_list) : ]:
 
-	if lines.index(line) == len(lines) - 1:
+	if input_lines.index(line) == len(input_lines) - 1:
 
 		if line == "hlt" :
 			ans +=f_commands[line] + "0"*11
@@ -45,7 +58,7 @@ for line in lines[len(var_list) : ]:
 			break
 
 		else :
-			#last instrcution is not hlt
+			#last instruction is not hlt
 			flag = True
 
 	line = list(line.split(" "))
@@ -75,7 +88,7 @@ for line in lines[len(var_list) : ]:
 		if x!="999" :
 			ans += x
 			if line[2] in var_list :
-				n = var_list.index(line[2]) + len(lines) - len(var_list)
+				n = var_list.index(line[2]) + len(input_lines) - len(var_list)
 				ans += str(f'{n:08b}')
 				
 			else:
@@ -92,9 +105,13 @@ for line in lines[len(var_list) : ]:
 			print("ERROR: Invalid syntax")
 			quit()
 
-		if lines.index(line[0]) != len(lines) - 1:
+		if input_lines.index(line[0]) != len(input_lines) - 1:
 			print("ERROR: hlt not being used as the last instruction")
 			quit()
+
+	if line[0] == "var" :
+		print("ERROR: Variables not declared in the beginning")
+		quit()
 
 	print(ans)
 	ans = ""
