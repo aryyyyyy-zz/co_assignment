@@ -39,12 +39,10 @@ for line in lines[len(var_list) : ]:
 
 	if lines.index(line) == len(lines) - 1:
 
-		if len(line) != 3 :						#3-lettered command "hlt"
-			print("ERROR: Invalid syntax")
-			quit()
-
 		if line == "hlt" :
 			ans +=f_commands[line] + "0"*11
+			print(ans)
+			break
 
 		else :
 			#last instrcution is not hlt
@@ -52,7 +50,7 @@ for line in lines[len(var_list) : ]:
 
 	line = list(line.split(" "))
 
-	if line[0] in a_commands :
+	if line[0] in a_commands.keys() :
 
 		if len(line) != 4 :
 			print("ERROR: Invalid syntax")
@@ -66,7 +64,7 @@ for line in lines[len(var_list) : ]:
 		x = getRegister(line[1], False) + getRegister(line[2], False) + getRegister(line[3], False)
 		ans += x
 
-	if line[0] in d_commands :
+	if line[0] in d_commands.keys() :
 
 		if len(line) != 3 :
 			print("ERROR: Invalid syntax")
@@ -88,10 +86,15 @@ for line in lines[len(var_list) : ]:
 			print("ERROR: Invalid register name")
 			quit()
 
-	if line[0] in f_commands and lines.index(line[0]) != len(lines) - 1 :
+	if line[0] in f_commands.keys() :
 
-		print("ERROR: hlt not being used as the last instruction")
-		quit()
+		if len(line) != 1 :
+			print("ERROR: Invalid syntax")
+			quit()
+
+		if lines.index(line[0]) != len(lines) - 1:
+			print("ERROR: hlt not being used as the last instruction")
+			quit()
 
 	print(ans)
 	ans = ""
