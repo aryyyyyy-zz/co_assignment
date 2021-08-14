@@ -4,7 +4,8 @@ def getRegister(token, flagsMod) :
 
 	registerNames = ["R0", "R1", "R2", "R3", "R4", "R5", "R6"]
 
-	if token in registerNames :
+	#if token in registerNames :
+	if int(token[1]) in range(7) and token[0]=="R":
 		ans = str(f'{int(token[1]):03b}')
 	
 	elif token == "FLAGS" :
@@ -79,7 +80,7 @@ for line in input_lines[len(var_list) : ]:
 		x = getRegister(line[1], False) + getRegister(line[2], False) + getRegister(line[3], False)
 		ans += x
 
-	elif line[0]== "mov":
+	elif line[0] in b_commands.keys() and line[0] in c_commands.keys():
 	#command is 'mov'
 
 		if len(line) != 3:
