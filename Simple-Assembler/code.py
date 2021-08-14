@@ -22,6 +22,7 @@ def getRegister(token, flagsMod) :
 
 input_lines = []
 var_list = []
+label_list = {}
 flag = False
 a_commands = {'add': "00000",'sub': "00001", 'mul': "00110", 'xor': "01010", 'or': "01011", 'and': "01100"}
 b_commands = {'mov'  : "00010", 'rs' : "01000", 'ls' : "01001"}
@@ -51,6 +52,17 @@ for line in input_lines:
 	else:
 		break
 
+#finds all labels and records their index in dict
+randomIndexVariable = 0
+for line in input_lines[len(var_list) : ]:
+	line = list(line.split(' '))
+	if line[0][0:5] == 'label':
+		label_list[line[0]] = str(f'{randomIndexVariable:08b}')
+		line = line[1:] #removing the 'labelx' text from the command
+	randomIndexVariable += 1
+	
+
+
 for line in input_lines[len(var_list) : ]:
 
 	if input_lines.index(line) == len(input_lines) - 1:
@@ -63,8 +75,6 @@ for line in input_lines[len(var_list) : ]:
 		else :
 			#last instruction is not hlt
 			flag = True
-
-	line = list(line.split(" "))
 
 	if line[0] in a_commands.keys() :
 
@@ -185,12 +195,11 @@ for line in input_lines[len(var_list) : ]:
 		ans += e_commands[line[0]]
 		ans += '0' * 3
 
-		if line[1] in var_list :
-				n = var_list.index(line[1]) + len(input_lines) - len(var_list)
-				ans += str(f'{n:08b}')
+		if line[1] in label_list.keys():
+			ans += label_list[line[1]]
 		else:
-				print("ERROR: Use of undefined variable")
-				quit()
+			print('ERROR: Invalid Label')
+			quit()
 
 
 	elif line[0] in f_commands.keys() :
