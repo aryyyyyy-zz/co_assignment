@@ -3,9 +3,8 @@ from sys import stdin
 def getRegister(token, flagsMod) :
 
 	registerNames = ["R0", "R1", "R2", "R3", "R4", "R5", "R6"]
-
 	#if token in registerNames :
-	if int(token[1]) in range(7) and token[0]=="R":
+	if int(token[1]) in range(7) and token[0]=="R" :
 		ans = str(f'{int(token[1]):03b}')
 	
 	elif token == "FLAGS" :
