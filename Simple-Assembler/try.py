@@ -15,6 +15,7 @@ def getRegister(token, flag) :
 
 lines = []
 var_list = []
+inst = []
 flag = False
 a_commands = {'add': "00000",'sub': "00001", 'mul': "00110", 'xor': "01010", 'or': "01011", 'and': "01100"}
 b_commands = {'mov'  : "00010", 'rs' : "01000", 'ls' : "01001"}
@@ -22,8 +23,8 @@ c_commands = {'mov' : "00011", 'div' : "00111", 'not' : "01101", 'cmp' : "01110"
 d_commands = {'ld': "00100", 'st': "00101"}
 f_commands = {"hlt": "10011"}
 
-while True:
-	line = input()
+for line in stdin:
+	
 	if line == '': # If empty string is read then stop the loop
 		break
 	lines.append(line)
@@ -67,6 +68,9 @@ for line in lines[len(var_list) : ]:
 		ans += x
 
 	elif (line[0] in b_commands.keys()) and (line[0] in c_commands.keys()):
+		if len(line) != 3:
+			print("ERROR: Invalid syntax")
+			quit()
 		if line[2][0] == "R":
 			ans += c_commands[line[0]] + "00000"
 			if (getRegister(line[1], False) == '999' or getRegister(line[2], False) == '999') :
@@ -80,9 +84,19 @@ for line in lines[len(var_list) : ]:
 				print("ERROR: Invalid register name")
 				quit()
 			ans += getRegister(line[1], False)
-			ans += str(f'{int(line[2]):08b}')
+			line[2] = ""+ line[2][1:]
+			#print(line[2])
+			if (0 <= int(line[2]) <= 255):
+				ans += str(f'{int(line[2]):08b}')
+			else:
+				print("Illegal Immediate Value")
+				quit()
 
 	elif line[0] in b_commands.keys():
+		if len(line) != 3:
+			print("ERROR: Invalid syntax")
+			quit()
+
 		ans += b_commands[line[0]]
 		if (getRegister(line[1], False) == '999') :
 			print("ERROR: Invalid register name")
@@ -91,6 +105,9 @@ for line in lines[len(var_list) : ]:
 		ans += str(f'{int(line[2]):08b}')
 
 	elif line[0] in c_commands.keys():
+		if len(line) != 3:
+			print("ERROR: Invalid syntax")
+			quit()
 		ans += c_commands[line[0]] + "00000"
 		if (getRegister(line[1], False) == '999' or getRegister(line[2], False) == '999') :
 			print("ERROR: Invalid register name")
@@ -130,6 +147,9 @@ for line in lines[len(var_list) : ]:
 			print("ERROR: hlt not being used as the last instruction")
 			quit()
 
+	else:
+		print("Invalid Instruction")
+		quit()
 	print(ans)
 	ans = ""
 
