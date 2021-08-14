@@ -54,11 +54,12 @@ for line in input_lines:
 
 #finds all labels and records their index in dict
 randomIndexVariable = 0
-for line in input_lines[len(var_list) : ]:
-	line = list(line.split(' '))
-	if line[0][0:5] == 'label':
+for i in range(len(var_list), len(input_lines)):
+
+	input_lines[i] = list(input_lines[i].split(' '))
+	if input_lines[i][-1] == ':':
 		label_list[line[0]] = str(f'{randomIndexVariable:08b}')
-		line = line[1:] #removing the 'labelx' text from the command
+		input_lines[i] = input_lines[i][1:] #removing the 'labelx' text from the command
 	randomIndexVariable += 1
 	
 
@@ -67,15 +68,15 @@ for line in input_lines[len(var_list) : ]:
 
 	if input_lines.index(line) == len(input_lines) - 1:
 
-		if line == "hlt" :
-			ans +=f_commands[line] + "0"*11
+		if line[0] == "hlt" :
+			ans +=f_commands[line[0]] + "0"*11
 			print(ans)
 			break
 
 		else :
 			#last instruction is not hlt
 			flag = True
-
+	#line = list(line.split(' '))
 	if line[0] in a_commands.keys() :
 
 		if len(line) != 4 :
@@ -188,18 +189,18 @@ for line in input_lines[len(var_list) : ]:
 			print("ERROR: Invalid register name")
 			quit()
 
-	elif line[0] in e_commands.keys() :
-		if len(line) != 2:
-			print("ERROR: Invalid Syntax")
-			quit()
-		ans += e_commands[line[0]]
-		ans += '0' * 3
+	# elif line[0] in e_commands.keys() :
+	# 	if len(line) != 2:
+	# 		print("ERROR: Invalid Syntax")
+	# 		quit()
+	# 	ans += e_commands[line[0]]
+	# 	ans += '0' * 3
 
-		if line[1] in label_list.keys():
-			ans += label_list[line[1]]
-		else:
-			print('ERROR: Invalid Label')
-			quit()
+	# 	if line[1] in label_list.keys():
+	# 		ans += label_list[line[1]]
+	# 	else:
+	# 		print('ERROR: Invalid Label')
+	# 		quit()
 
 
 	elif line[0] in f_commands.keys() :
