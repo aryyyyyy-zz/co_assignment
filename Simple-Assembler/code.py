@@ -27,6 +27,7 @@ a_commands = {'add': "00000",'sub': "00001", 'mul': "00110", 'xor': "01010", 'or
 b_commands = {'mov'  : "00010", 'rs' : "01000", 'ls' : "01001"}
 c_commands = {'mov' : "00011", 'div' : "00111", 'not' : "01101", 'cmp' : "01110"}  #cmp affects flag
 d_commands = {'ld': "00100", 'st': "00101"}
+e_commands = {'je': '10010', 'jgt': '10001', 'jlt': '10000', 'jmp': '01111'}
 f_commands = {"hlt": "10011"}
 
 for line in stdin:
@@ -177,6 +178,21 @@ for line in input_lines[len(var_list) : ]:
 			print("ERROR: Invalid register name")
 			quit()
 
+	elif line[0] in e_commands.keys() :
+		if len(line) != 2:
+			print("ERROR: Invalid Syntax")
+			quit()
+		ans += e_commands[line[0]]
+		ans += '0' * 3
+
+		if line[1] in var_list :
+				n = var_list.index(line[1]) + len(input_lines) - len(var_list)
+				ans += str(f'{n:08b}')
+		else:
+				print("ERROR: Use of undefined variable")
+				quit()
+
+
 	elif line[0] in f_commands.keys() :
 
 		if len(line) != 1 :
@@ -186,6 +202,10 @@ for line in input_lines[len(var_list) : ]:
 		if input_lines.index(line[0]) != len(input_lines) - 1:
 			print("ERROR: hlt not being used as the last instruction")
 			quit()
+
+		# ans +=f_commands[line[0]] + "0"*11
+
+
 
 	elif line[0] == "var" :
 		print("ERROR: Variables not declared in the beginning")
