@@ -111,7 +111,8 @@ def handle_c(cmd):
     ans = c_commands[cmd[0]] + "00000" + getRegister(cmd[1]) + getRegister(cmd[2], 'mov')
     print(ans)
     
-def handle_d(cmd, variables, instructionSize): #st R4 xyz
+def handle_d(cmd, instructionSize): #st R4 xyz
+    global variables
     ans = ""
     ans += d_commands[cmd[0]] + getRegister(cmd[1])
     if cmd[2] in variables:
@@ -122,11 +123,12 @@ def handle_d(cmd, variables, instructionSize): #st R4 xyz
         quit()
     print(ans)
 
-def handle_e(line, labels):
+def handle_e(line):
+    global labels
     ans = ''
     ans += e_commands[line[0]] + '000'
     if str(line[1]) in labels.keys():
-        ans += str(f'{int(labels[line[1]]):08b}')
+        ans += str(f'{int(labels[line[1]][1]):08b}')
     else:
         print('Line',err_line, ':', errors['c'])
         quit()
@@ -187,7 +189,7 @@ for line in lines:
 
 lines = lines[len(variables):]
 
-
+c_lab = 0
 for i in range(len(lines)):
     lines[i] = list(lines[i].split(' '))
     string = "\t".join(lines[i])
@@ -200,8 +202,12 @@ for i in range(len(lines)):
             elif lines[i][0][:-1] in variables:
                 print('Line',err_line, ':', errors['f'])
                 quit()
-            labels[lines[i][0][:-1]] = i
+            labels[lines[i][0][:-1]] = [i,c_lab]
             lines[i] = lines[i][1:]
+    if line == ['']:
+        c_lab += 0
+    else:
+        c_lab += 1
 
 if ['hlt'] not in lines:
     print(errors['h'])
@@ -254,7 +260,7 @@ for line in lines:
             print('Line',err_line, ':', errors['j'])
             quit()
             
-        handle_d(line, variables, len(lines))
+        handle_d(line, len(lines))
 
 
     # E COMMANDS
@@ -262,7 +268,7 @@ for line in lines:
         if len(line) != instruction_length['e']:
             print('Line',err_line, ':', errors['j'])
             quit()
-        handle_e(line, labels)
+        handle_e(line)
 
     
 
