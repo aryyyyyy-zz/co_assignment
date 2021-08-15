@@ -25,9 +25,6 @@ f_commands = {"hlt": "10011"}
 instruction_length = {'a' : 4, 'b' : 3, 'c' : 3, 'd': 3, 'e': 2, 'f': 1}
 
 
-#error line number - empty line counted 
-#empty lines : zero
-
 
 #--------------------------------------------------- HELPER FUNCTIONS ------------------------------------------------
 
