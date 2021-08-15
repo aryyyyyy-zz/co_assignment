@@ -24,9 +24,8 @@ f_commands = {"hlt": "10011"}
 instruction_length = {'a' : 4, 'b' : 3, 'c' : 3, 'd': 3, 'e': 2, 'f': 1}
 
 
-
-
-
+#error line number - empty line counted 
+#empty lines : zero
 
 
 #--------------------------------------------------- HELPER FUNCTIONS ------------------------------------------------
@@ -46,7 +45,7 @@ def getRegister(reg, instruction = 'add'):
             quit()
     
     else:
-        print(errors['a'])
+        print(reg+ errors['a'])
         quit()
 
     return ans
@@ -140,7 +139,7 @@ def handle_e(line, labels):
 
 
 
-# -------------------------------------- VARIABLES ---------------------------------------------------
+# -------------------------------------- LISTS ---------------------------------------------------
 lines = []
 variables = []
 labels = {}
@@ -152,24 +151,21 @@ labels = {}
 # --------------------------------------------- HANDLING INPUT --------------------------------------
 
 input_lines = os.read(0, 10**6).strip().splitlines() 
-i=0;
+i=0
 size=len(input_lines)
 instruction=[];
 for x in range(len(input_lines)):
     line = input_lines[x].decode('utf-8') 
     
     lines.append(line)
-
-# while True:
-#     inp = input()
-#     if inp == '':
-#         break
-#     lines.append(inp)
-    
-
+   
+#--------------------------------------------- MAKING VARIABLE AND LABEL LIST --------------------------------------
 for line in lines:
+
     line = line.split(' ')
-    
+    string = "\t".join(line)
+    line = string.split('\t')
+    	
     if line[0] == 'var':
         if len(line) != 2:
             print(errors['j'])
@@ -182,9 +178,11 @@ for line in lines:
 
 lines = lines[len(variables):]
 
-
 for i in range(len(lines)):
     lines[i] = list(lines[i].split(' '))
+    string = "\t".join(lines[i])
+    lines[i] = string.split("\t")
+    	
     if lines[i][0][-1] == ':':
         labels[lines[i][0][:-1]] = i
         lines[i] = lines[i][1:]
@@ -193,7 +191,10 @@ for i in range(len(lines)):
 # ----------------------------------------- MAIN LOOP -------------------------------------
 for line in lines:
 
+
     # A COMMANDS
+    
+    #	print(line)
     if line[0] in a_commands.keys():
         if len(line) != instruction_length['a']:
             print(errors['j'])
@@ -238,7 +239,7 @@ for line in lines:
     # E COMMANDS
     elif line[0] in e_commands.keys():
         if len(line) != instruction_length['e']:
-            print(errors['a'])
+            print(errors['j'])
             quit()
         handle_e(line, labels)
 
