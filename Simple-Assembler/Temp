@@ -24,7 +24,7 @@ f_commands = {"hlt": "10011"}
 
 instruction_length = {'a' : 4, 'b' : 3, 'c' : 3, 'd': 3, 'e': 2, 'f': 1}
 
-err_line = 0
+err_line = 1
 
 
 
@@ -186,9 +186,10 @@ for i in range(len(lines)):
     lines[i] = list(lines[i].split(' '))
     string = "\t".join(lines[i])
     lines[i] = string.split("\t")
-    if lines[i][0][-1] == ':':
-        labels[lines[i][0][:-1]] = i
-        lines[i] = lines[i][1:]
+    if len(lines[i]) != 1:
+        if lines[i][0][-1] == ':':
+            labels[lines[i][0][:-1]] = i
+            lines[i] = lines[i][1:]
 
 
 # ----------------------------------------- MAIN LOOP -------------------------------------
@@ -257,7 +258,10 @@ for line in lines:
         else:
             print('Line',err_line, ':', errors['i'])
             quit()
-        
+    
+    elif line == ['']:
+        err_line += 1
+        continue
   
     # INVALID COMMAND ERROR
     else:
