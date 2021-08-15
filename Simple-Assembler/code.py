@@ -1,4 +1,3 @@
-from sys import stdin
 import os
 
 def getRegister(token, flagsMod) :
@@ -74,14 +73,15 @@ for inst in input_lines[len(var_list) : ]:
 	randomIndexVariable += 1
 
 #print(label_list)
-
-#print(label_list)
 	
 for line_s in input_lines[len(var_list) : ]:
 
 	ans = ""
 
 	line = list(line_s.split(' '))
+
+	while (line.count("") != 0):
+		line.remove("")
 
 	if line[0] in label_list.keys():
 		line = line[1:]
@@ -233,7 +233,7 @@ for line_s in input_lines[len(var_list) : ]:
 			print("ERROR: Invalid syntax")
 			quit()
 
-		if input_lines.index(line[0]) != len(input_lines) - 1:
+		if input_lines.index(line_s) != len(input_lines) - 1:
 			print("ERROR: hlt not being used as the last instruction")
 			quit()
 
@@ -249,7 +249,6 @@ for line_s in input_lines[len(var_list) : ]:
 
 	bin_solution.append(ans)
 	
-
 	if flag :
 		print("ERROR: Missing hlt instruction")
 		quit()
