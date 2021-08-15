@@ -45,7 +45,7 @@ def getRegister(reg, instruction = 'add'):
             quit()
     
     else:
-        print(reg+ errors['a'])
+        print(errors['a'])
         quit()
 
     return ans
