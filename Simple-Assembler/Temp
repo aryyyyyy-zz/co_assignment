@@ -128,7 +128,7 @@ def handle_e(line, labels):
     if str(line[1]) in labels.keys():
         ans += str(f'{int(labels[line[1]]):08b}')
     else:
-        print('Line',err_line, ':', errors['a'])
+        print('Line',err_line, ':', errors['c'])
         quit()
     print(ans)
 
@@ -172,7 +172,13 @@ for line in lines:
     
     if line[0] == 'var':
         if len(line) != 2:
-            print(errors['j'])
+            print('Line',err_line, ':', errors['j'])
+            quit()
+        elif line[1] in variables:
+            print('Line',err_line, ':', errors['k'])
+            quit()
+        elif line[1] in labels.keys():
+            print('Line',err_line, ':', errors['f'])
             quit()
         variables.append(line[1])
     else:
@@ -188,16 +194,29 @@ for i in range(len(lines)):
     lines[i] = string.split("\t")
     if len(lines[i]) != 1:
         if lines[i][0][-1] == ':':
+            if lines[i][0][:-1] in labels.keys():
+                print('Line',err_line, ':', errors['k'])
+                quit()
+            elif lines[i][0][:-1] in variables:
+                print('Line',err_line, ':', errors['f'])
+                quit()
             labels[lines[i][0][:-1]] = i
             lines[i] = lines[i][1:]
 
+if ['hlt'] not in lines:
+    print(errors['h'])
+    quit()
 
 # ----------------------------------------- MAIN LOOP -------------------------------------
 
 for line in lines:
 
+    if line[0] == 'var':
+        print('Line',err_line, ':', errors['g'])
+        quit()
+
     # A COMMANDS
-    if line[0] in a_commands.keys():
+    elif line[0] in a_commands.keys():
         if len(line) != instruction_length['a']:
             print('Line',err_line, ':', errors['j'])
             quit()
@@ -255,6 +274,7 @@ for line in lines:
                 quit()
             
             print(f_commands[line[0]] + "0"*11)
+            quit()
         else:
             print('Line',err_line, ':', errors['i'])
             quit()
