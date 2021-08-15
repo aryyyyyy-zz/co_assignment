@@ -103,7 +103,7 @@ def handle_b(cmd, n):
 				print("Line", indices[n], ":", errors['e'])
 				quit()
 		else:
-			print("Line", indices[n], ":", errors['a'])
+			print("Line", indices[n], ":", errors['e'])
 			quit()
 	else:
 		print("Line", indices[n], ":", errors['j'])
@@ -115,7 +115,7 @@ def handle_c(cmd, n):
 	ans = c_commands[cmd[0]] + "00000" + getRegister(cmd[1], n) + getRegister(cmd[2], n,'mov')
 	output.append(ans)
 	
-def handle_d(cmd, variables, instructionSize, n): #st R4 xyz
+def handle_d(cmd, variables, instructionSize, n): 
 	global indices
 	ans = ""
 	ans += d_commands[cmd[0]] + getRegister(cmd[1], n)
@@ -139,10 +139,7 @@ def handle_e(line, labels, n):
 		quit()
 	output.append(ans)
 
-	
 
-#def setFlag: 
-#def getFlag:
 
 
 # -------------------------------------- LISTS ---------------------------------------------------
@@ -157,7 +154,7 @@ output = []
 input_lines = os.read(0, 10**6).strip().splitlines() 
 i=0
 size=len(input_lines)
-instruction=[];
+instruction=[]
 for x in range(len(input_lines)):
 	line = input_lines[x].decode('utf-8') 
 	lines.append(line)
@@ -226,7 +223,6 @@ for line in lines:
 	if line[0] in a_commands.keys():
 		if len(line) != instruction_length['a']:
 			print("Line", indices[index], ":", errors['j'])
-			#print()
 			quit()
 			
 		handle_a(line, index)
@@ -296,17 +292,6 @@ for line in lines:
 		quit()
 		
 	index += 1
-
-
-
-
-
-
-
-
-	
-
-
 
 
 
