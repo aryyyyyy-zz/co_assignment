@@ -40,11 +40,8 @@ class Simulator:
 		self.registers = Registers()
 
 	def run(self):
-		input_lines = []
-		for line in stdin:
-			if line =='':
-				break
-			input_lines.append(line)
+
+		input_lines = os.read(0, 10**6).strip().splitlines() 
 
 		for i in  range(len(input_lines)):
 			self.memory.write(i, input_lines[i])
@@ -163,7 +160,7 @@ class Simulator:
 			regA = int(instruction[10:13], 2)
 			regB = int(instruction[13:16], 2)
 
-			val = ~self.registers.getValue(regB)
+			val = ~self.registers.getValue(regB) & 255
 			self.registers.setValue(regA, val)
 			self.pc += 1
 
@@ -225,7 +222,7 @@ class Simulator:
 	def printLine(self):
 		print(f'{(self.pc - 1):08b} ',end='')
 		for i in range(self.registers.getLength()):
-			print(f'{self.registers.getValue(i):16b} ', end = '')
+			print(f'{self.registers.getValue(i):016b} ', end = '')
 		print()
 
 	def memoryDump(self):
