@@ -1,5 +1,5 @@
 import os
-#hi
+
 class Memory:
     def __init__(self):
         MEMORY_SIZE = 256
@@ -8,7 +8,7 @@ class Memory:
             self.memory.append('0'*16)
     
     def write(self, index, instruction):
-        self.memory[i] = instruction
+        self.memory[index] = instruction
 
     def read(self, index):
         return self.memory[index]
@@ -59,15 +59,15 @@ class Simulator:
         opCode = int(instruction[0:5], 2)
 
         # ADD
-        if (opCode == 0):
+        if opCode == 0:
             regA = int(instruction[7:10], 2)
             regB = int(instruction[10:13], 2)
             regC = int(instruction[13:16], 2)
 
             val = self.registers.getValue(regB) + self.registers.getValue(regC)
+
             if (val > 255):
                 self.registers.setValue(7, 8)
-            
             elif (val < 0):
                 val = 0
                 self.registers.setValue(7, 8)
@@ -80,7 +80,58 @@ class Simulator:
         
         # SUB
         
+        #CMP
+        if opCode == 14:
+            regA = int(instruction[10:13], 2)
+            regB = int(instruction[13:16], 2)
+
+            if regA == regB:
+                self.registers.setValue(7, 1)
+            elif regA > regB:
+                self.registers.setValue(7, 2)
+            else:
+                self.registers.setValue(7, 4)
+            self.pc += 1
+
+        #UNCONDITIONAL JUMP
+        if opCode == 15:
+            addr = int(instruction[8:16], 2)
+            self.pc = addr
+            self.resetFlag()
+
+        #LT JUMP
+        if opCode == 16:
+            if self.registers.getValue(7) == 4:
+                addr = int(instruction[8:16], 2)
+                self.pc = addr
+            else:
+                self.pc += 1
+            self.resetFlag()
             
+        #GT JUMP
+        if opCode == 17:
+            if self.registers.getValue(7) == 2:
+                addr = int(instruction[8:16], 2)
+                self.pc = addr
+            else:
+                self.pc += 1
+            self.resetFlag()
+
+        #EQ JUMP
+        if opCode == 18:
+            if self.registers.getValue(7) == 1:
+                addr = int(instruction[8:16], 2)
+                self.pc = addr
+            else:
+                self.pc += 1
+            self.resetFlag()
+
+        #HLT
+        if opCode == 19:
+            self.resetFlag()
+            self.isHalted = True
+            self.pc += 1
+
 
     def printLine(self):
         print(f'{(self.pc - 1):08b} ',end='')
