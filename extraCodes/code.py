@@ -1,10 +1,11 @@
-from sys import stdin
+import os
 
 def getRegister(token, flagsMod) :
 
 	registerNames = ["R0", "R1", "R2", "R3", "R4", "R5", "R6"]
-	#if token in registerNames :
-	if int(token[1]) in range(7) and token[0]=="R" :
+
+	if token in registerNames :
+	#if int(token[1]) in range(7) and token[0]=="R" :
 		ans = str(f'{int(token[1]):03b}')
 	
 	elif token == "FLAGS" :
@@ -20,6 +21,8 @@ def getRegister(token, flagsMod) :
 
 	return ans
 
+ans = ""
+bin_solution = []
 input_lines = []
 var_list = []
 label_list = {}
@@ -31,12 +34,15 @@ d_commands = {'ld': "00100", 'st': "00101"}
 e_commands = {'je': '10010', 'jgt': '10001', 'jlt': '10000', 'jmp': '01111'}
 f_commands = {"hlt": "10011"}
 
-for line in stdin:
-	if line == '': # If empty string is read then stop the loop
-		break
-	input_lines.append(line)
-	
-ans = ""
+#input_lines = list(map(str, sys.stdin.readlines()))
+lines = os.read(0, 10**6).strip().splitlines() 
+i=0;
+size=len(lines)
+instruction=[];
+for x in range(len(lines)):
+    line = lines[x].decode('utf-8') 
+    
+    input_lines.append(line)
 
 for line in input_lines:
 	line = list(line.split(" "))
@@ -52,21 +58,50 @@ for line in input_lines:
 	else:
 		break
 
+#print(var_list)
 #finds all labels and records their index in dict
 randomIndexVariable = 0
+
+for inst in input_lines[len(var_list) : ]:
+	inst = list(inst.split(' '))
+	#word followed by ":"
+	if inst[0].find(":") != -1 :
+		if inst[0].find(":") == len(inst[0]) - 1:
+			label = inst[0]
+			label_list[label] =  str(f'{randomIndexVariable:08b}')
+
+
 for i in range(len(var_list), len(input_lines)):
 
 	input_lines[i] = list(input_lines[i].split(' '))
 	if input_lines[i][-1] == ':':
 		label_list[line[0]] = str(f'{randomIndexVariable:08b}')
 		input_lines[i] = input_lines[i][1:] #removing the 'labelx' text from the command
+
 	randomIndexVariable += 1
+
+#print(label_list)
 	
+for line_s in input_lines[len(var_list) : ]:
 
+	ans = ""
 
-for line in input_lines[len(var_list) : ]:
+	line = list(line_s.split(' '))
 
-	if input_lines.index(line) == len(input_lines) - 1:
+	while (line.count("") != 0):
+		line.remove("")
+
+	if line[0] in label_list.keys():
+		line = line[1:]
+
+	if input_lines.index(line_s) == len(input_lines) - 1:
+
+		if line[0] == "hlt" :
+			if len(line) != 1:
+				print("ERROR: Invalid Syntax")
+				quit()
+			ans +=f_commands[line[0]] + "0"*11
+			bin_solution.append(ans)
 
 		if line[0] == "hlt" :
 			ans +=f_commands[line[0]] + "0"*11
@@ -91,7 +126,7 @@ for line in input_lines[len(var_list) : ]:
 		x = getRegister(line[1], False) + getRegister(line[2], False) + getRegister(line[3], False)
 		ans += x
 
-	elif line[0] in b_commands.keys() and line[0] in c_commands.keys():
+	elif line[0]=="mov":
 	#command is 'mov'
 
 		if len(line) != 3:
@@ -116,10 +151,10 @@ for line in input_lines[len(var_list) : ]:
 			ans += getRegister(line[1], False)
 
 			if line[2][0] == '$' and line[2][1:].isnumeric():
-				line[2] = ""+ line[2][1:]
+				num = ""+ line[2][1:]
 				#print(line[2])
-				if (0 <= int(line[2]) <= 255):
-					ans += str(f'{int(line[2]):08b}')
+				if (0 <= int(num) <= 255):
+					ans += str(f'{int(num):08b}')
 				else:
 					print("Illegal Immediate Value")
 					quit()
@@ -142,10 +177,10 @@ for line in input_lines[len(var_list) : ]:
 		ans += getRegister(line[1], False)
 
 		if line[2][0] == '$' and line[2][1:].isnumeric():
-			line[2] = ""+ line[2][1:]
+			num = ""+ line[2][1:]
 			#print(line[2])
-			if (0 <= int(line[2]) <= 255):
-				ans += str(f'{int(line[2]):08b}')
+			if (0 <= int(num) <= 255):
+				ans += str(f'{int(num):08b}')
 			else:
 				print("Illegal Immediate Value")
 				quit()
@@ -189,18 +224,20 @@ for line in input_lines[len(var_list) : ]:
 			print("ERROR: Invalid register name")
 			quit()
 
-	# elif line[0] in e_commands.keys() :
-	# 	if len(line) != 2:
-	# 		print("ERROR: Invalid Syntax")
-	# 		quit()
-	# 	ans += e_commands[line[0]]
-	# 	ans += '0' * 3
 
-	# 	if line[1] in label_list.keys():
-	# 		ans += label_list[line[1]]
-	# 	else:
-	# 		print('ERROR: Invalid Label')
-	# 		quit()
+	elif line[0] in e_commands.keys() :
+		if len(line) != 2:
+			print("ERROR: Invalid Syntax")
+			quit()
+
+		ans += e_commands[line[0]] + '0'*3
+		label = line[1] + ":"
+
+		if label in label_list.keys():
+			ans += label_list[label]
+		else:
+			print('ERROR: Invalid Label')
+			quit()
 
 
 	elif line[0] in f_commands.keys() :
@@ -209,13 +246,11 @@ for line in input_lines[len(var_list) : ]:
 			print("ERROR: Invalid syntax")
 			quit()
 
-		if input_lines.index(line[0]) != len(input_lines) - 1:
+		if input_lines.index(line_s) != len(input_lines) - 1:
 			print("ERROR: hlt not being used as the last instruction")
 			quit()
 
-		# ans +=f_commands[line[0]] + "0"*11
-
-
+		# ans += f_commands[line[0]] + "0"*11
 
 	elif line[0] == "var" :
 		print("ERROR: Variables not declared in the beginning")
@@ -225,11 +260,11 @@ for line in input_lines[len(var_list) : ]:
 		print("ERROR: Invalid syntax")
 		quit()
 
-	print(ans)
-	ans = ""
-
+	bin_solution.append(ans)
+	
 	if flag :
 		print("ERROR: Missing hlt instruction")
 		quit()
 
-
+for bin in bin_solution:
+	print(bin)
