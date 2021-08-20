@@ -39,12 +39,18 @@ class Simulator:
 		self.isHalted = False
 		self.registers = Registers()
 
+<<<<<<< HEAD
 	def run(self, input_lines):
 
 		# for line in stdin:
 		# 	if line =='':
 		# 		break
 		# 	input_lines.append(line)
+=======
+	def run(self):
+
+		input_lines = os.read(0, 10**6).strip().splitlines() 
+>>>>>>> b538cae47d624bd871ddb1f6582153d4a01e5b85
 
 		for i in  range(len(input_lines)):
 			self.memory.write(i, input_lines[i])
@@ -163,7 +169,7 @@ class Simulator:
 			regA = int(instruction[10:13], 2)
 			regB = int(instruction[13:16], 2)
 
-			val = ~self.registers.getValue(regB)
+			val = ~self.registers.getValue(regB) & 255
 			self.registers.setValue(regA, val)
 			self.pc += 1
 
@@ -225,13 +231,14 @@ class Simulator:
 	def printLine(self):
 		print(f'{(self.pc - 1):08b} ',end='')
 		for i in range(self.registers.getLength()):
-			print(f'{self.registers.getValue(i):16b} ', end = '')
+			print(f'{self.registers.getValue(i):016b} ', end = '')
 		print()
 
 	def memoryDump(self):
 		for i in range(self.memory.getSize()):
 			print(self.memory.read(i))
 
+<<<<<<< HEAD
 # def main() :
 # 	sim = Simulator()
 #     print('hello')
@@ -248,3 +255,8 @@ def main():
     sim.run(input_lines)
 
 main()
+=======
+if __name__ == "__main__" :
+	sim = Simulator()
+	sim.run()
+>>>>>>> b538cae47d624bd871ddb1f6582153d4a01e5b85
