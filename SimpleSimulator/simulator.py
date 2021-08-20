@@ -1,5 +1,6 @@
 import os
 from sys import stdin
+import matplotlib.pyplot as plt 
 
 class Memory:
 	def __init__(self):
@@ -38,13 +39,18 @@ class Simulator:
 		self.pc = 0
 		self.isHalted = False
 		self.registers = Registers()
+		self.pcVector = []
+
+
 
 	def run(self, input_lines):
+
 
 		for i in  range(len(input_lines)):
 			self.memory.write(i, input_lines[i])
 
 		while (not self.isHalted):
+			self.pcVector.append(self.pc)
 			instruction = self.memory.read(self.pc)
 			self.execute(instruction)
 			self.printLine()
@@ -289,11 +295,21 @@ class Simulator:
 		for i in range(self.memory.getSize()):
 			print(self.memory.read(i))
 
+	def printPlot(self):
+		vecX = []
+		for i in range(len(self.pcVector)):
+			vecX.append(i)
+		plt.plot(vecX, self.pcVector)
+		plt.show()
+		
+
 def main():
 	input_lines = os.read(0, 10**6).strip().splitlines() 
 	for x in range(len(input_lines)):
 		input_lines[x] = input_lines[x].decode("utf-8")
 	sim = Simulator()
 	sim.run(input_lines)
+	sim.printPlot()
+	
 
 main()
