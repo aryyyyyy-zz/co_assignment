@@ -39,18 +39,9 @@ class Simulator:
 		self.isHalted = False
 		self.registers = Registers()
 
-<<<<<<< HEAD
-	def run(self, input_lines):
-
-		# for line in stdin:
-		# 	if line =='':
-		# 		break
-		# 	input_lines.append(line)
-=======
 	def run(self):
 
 		input_lines = os.read(0, 10**6).strip().splitlines() 
->>>>>>> b538cae47d624bd871ddb1f6582153d4a01e5b85
 
 		for i in  range(len(input_lines)):
 			self.memory.write(i, input_lines[i])
@@ -89,7 +80,7 @@ class Simulator:
 			self.registers.setValue(regA, val)
 			self.pc += 1
 		
-		# SUBB
+		# SUB
 
 		# DIV
 		if (opCode == 7):
@@ -238,25 +229,6 @@ class Simulator:
 		for i in range(self.memory.getSize()):
 			print(self.memory.read(i))
 
-<<<<<<< HEAD
-# def main() :
-# 	sim = Simulator()
-#     print('hello')
-# 	sim.run()
-
-# main()
-
-def main():
-    input_lines = os.read(0, 10**6).strip().splitlines()
-    for x in range(len(input_lines)):
-        input_lines[x] = input_lines[x].decode('utf-8')
-    
-    sim = Simulator()
-    sim.run(input_lines)
-
-main()
-=======
 if __name__ == "__main__" :
 	sim = Simulator()
 	sim.run()
->>>>>>> b538cae47d624bd871ddb1f6582153d4a01e5b85
