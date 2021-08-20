@@ -291,6 +291,8 @@ class Simulator:
 
 def main():
 	input_lines = os.read(0, 10**6).strip().splitlines() 
+	for x in range(len(input_lines)):
+		input_lines[x] = input_lines[x].decode("utf-8")
 	sim = Simulator()
 	sim.run(input_lines)
 
