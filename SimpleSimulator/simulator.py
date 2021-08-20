@@ -108,6 +108,7 @@ class Simulator:
 			val = int(instruction[8:16], 2)
 			self.registers.setValue(regA, val)
 			self.pc += 1
+			self.resetFlag()
 		
 		# MOV REG
 		if opCode == 3:
@@ -115,6 +116,7 @@ class Simulator:
 			regB = int(instruction[13:16], 2)
 			self.registers.setValue(regA, self.registers.getValue(regB))
 			self.pc += 1
+			self.resetFlag()
 
 		# LOAD
 		if opCode == 4:
@@ -122,6 +124,7 @@ class Simulator:
 			memAddress = int(instruction[8:16], 2)
 			self.registers.setValue(regA, self.memory.read(memAddress))
 			self.pc += 1
+			self.resetFlag()
 
 		# STORE
 		if opCode == 5:
@@ -129,6 +132,7 @@ class Simulator:
 			memAddress = int(instruction[8:16], 2)
 			self.memory.write(memAddress, self.registers.getValue(regA))
 			self.pc += 1
+			self.resetFlag()
 
 		# MUL
 		if opCode == 6:
@@ -226,7 +230,7 @@ class Simulator:
 			regA = int(instruction[10:13], 2)
 			regB = int(instruction[13:16], 2)
 
-			val = ~self.registers.getValue(regB) & 255
+			val = ~self.registers.getValue(regB) & (2**16 - 1)
 			self.registers.setValue(regA, val)
 			self.pc += 1
 
@@ -237,9 +241,12 @@ class Simulator:
 			regA = int(instruction[10:13], 2)
 			regB = int(instruction[13:16], 2)
 
+			regA = self.registers.getValue(regA)
+			regB = self.registers.getValue(regB)
+
 			if regA == regB:
 				self.registers.setValue(7, 1)
-			elif regA > regB:
+			elif regA < regB:
 				self.registers.setValue(7, 2)
 			else:
 				self.registers.setValue(7, 4)
@@ -293,7 +300,11 @@ class Simulator:
 
 	def memoryDump(self):
 		for i in range(self.memory.getSize()):
-			print(self.memory.read(i))
+			x = self.memory.read(i)
+			if len(str(x)) == 16:
+				print(str(x))
+			else:
+				print(f'{int(x):016b}')
 
 	def printPlot(self):
 		#...
