@@ -80,7 +80,7 @@ class Simulator:
 			self.registers.setValue(regA, val)
 			self.pc += 1
 		
-		# SUB
+		# SUBB
 
 		# DIV
 		if (opCode == 7):
