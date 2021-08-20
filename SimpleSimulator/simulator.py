@@ -39,9 +39,7 @@ class Simulator:
 		self.isHalted = False
 		self.registers = Registers()
 
-	def run(self):
-
-		input_lines = os.read(0, 10**6).strip().splitlines() 
+	def run(self, input_lines):
 
 		for i in  range(len(input_lines)):
 			self.memory.write(i, input_lines[i])
@@ -291,6 +289,9 @@ class Simulator:
 		for i in range(self.memory.getSize()):
 			print(self.memory.read(i))
 
-if __name__ == "__main__" :
+def main():
+	input_lines = os.read(0, 10**6).strip().splitlines() 
 	sim = Simulator()
-	sim.run()
+	sim.run(input_lines)
+
+main()
