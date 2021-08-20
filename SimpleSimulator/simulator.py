@@ -296,6 +296,7 @@ class Simulator:
 			print(self.memory.read(i))
 
 	def printPlot(self):
+		#...
 		vecX = []
 		for i in range(len(self.pcVector)):
 			vecX.append(i)
