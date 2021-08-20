@@ -246,7 +246,7 @@ class Simulator:
 
 			if regA == regB:
 				self.registers.setValue(7, 1)
-			elif regA < regB:
+			elif regA > regB:
 				self.registers.setValue(7, 2)
 			else:
 				self.registers.setValue(7, 4)
