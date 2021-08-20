@@ -81,6 +81,68 @@ class Simulator:
 			self.pc += 1
 		
 		# SUB
+		if opCode == 1:
+			regA = int(instruction[7:10], 2)
+			regB = int(instruction[10:13], 2)
+			regC = int(instruction[13:16], 2)
+
+			val = self.registers.getValue(regB) - self.registers.getValue(regC)
+
+			
+			if (val < 0):
+				val = 0
+				self.registers.setValue(7, 8)
+			else:
+				self.resetFlag()
+
+			self.registers.setValue(regA, val)
+			self.pc += 1
+
+		# MOV IMM
+		if opCode == 2:
+			regA = int(instruction[5:8], 2)
+			val = int(instruction[8:16], 2)
+			self.registers.setValue(regA, val)
+			self.pc += 1
+		
+		# MOV REG
+		if opCode == 3:
+			regA = int(instruction[10:13], 2)
+			regB = int(instruction[13:16], 2)
+			self.registers.setValue(regA, self.registers.getValue(regB))
+			self.pc += 1
+
+		# LOAD
+		if opCode == 4:
+			regA = int(instruction[5:8], 2)
+			memAddress = int(instruction[8:16], 2)
+			self.registers.setValue(regA, self.memory.read(memAddress))
+			self.pc += 1
+
+		# STORE
+		if opCode == 5:
+			regA = int(instruction[5:8], 2)
+			memAddress = int(instruction[8:16], 2)
+			self.memory.write(memAddress, self.registers.getValue(regA))
+			self.pc += 1
+
+		# MUL
+		if opCode == 6:
+			regA = int(instruction[7:10], 2)
+			regB = int(instruction[10:13], 2)
+			regC = int(instruction[13:16], 2)
+
+			val = self.registers.getValue(regB) * self.registers.getValue(regC)
+
+			if (val > 255):
+				self.registers.setValue(7, 8)
+			else:
+				self.resetFlag()
+
+			val = val % 256
+			self.registers.setValue(regA, val)
+			self.pc += 1
+			
 
 		# DIV
 		if (opCode == 7):
