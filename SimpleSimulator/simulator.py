@@ -40,6 +40,7 @@ class Simulator:
 		self.isHalted = False
 		self.registers = Registers()
 		self.pcVector = []
+		self.prevPC = 0
 
 
 
@@ -72,16 +73,14 @@ class Simulator:
 
 			val = self.registers.getValue(regB) + self.registers.getValue(regC)
 
-			if (val > 255):
-				self.registers.setValue(7, 8)
-			elif (val < 0):
-				val = 0
+			if (val > (2**16 - 1)):
 				self.registers.setValue(7, 8)
 			else:
 				self.resetFlag()
 
-			val = val % 256
+			val = val % (2**16)
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 		
 		# SUB
@@ -100,6 +99,7 @@ class Simulator:
 				self.resetFlag()
 
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 
 		# MOV IMM
@@ -107,6 +107,7 @@ class Simulator:
 			regA = int(instruction[5:8], 2)
 			val = int(instruction[8:16], 2)
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
 		
@@ -115,6 +116,7 @@ class Simulator:
 			regA = int(instruction[10:13], 2)
 			regB = int(instruction[13:16], 2)
 			self.registers.setValue(regA, self.registers.getValue(regB))
+			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
 
@@ -123,6 +125,7 @@ class Simulator:
 			regA = int(instruction[5:8], 2)
 			memAddress = int(instruction[8:16], 2)
 			self.registers.setValue(regA, self.memory.read(memAddress))
+			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
 
@@ -131,6 +134,7 @@ class Simulator:
 			regA = int(instruction[5:8], 2)
 			memAddress = int(instruction[8:16], 2)
 			self.memory.write(memAddress, self.registers.getValue(regA))
+			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
 
@@ -142,13 +146,14 @@ class Simulator:
 
 			val = self.registers.getValue(regB) * self.registers.getValue(regC)
 
-			if (val > 255):
+			if (val > (2**16 - 1)):
 				self.registers.setValue(7, 8)
 			else:
 				self.resetFlag()
 
-			val = val % 256
+			val = val % (2**16)
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 			
 
@@ -162,6 +167,7 @@ class Simulator:
 			remainder = self.registers.getValue(regA) % self.registers.getValue(regB)
 			self.registers.setValue(0, quotient)
 			self.registers.setValue(1, remainder)
+			self.prevPC = self.pc
 			self.pc += 1
 
 			self.resetFlag()
@@ -172,6 +178,7 @@ class Simulator:
 			imm = int(instruction[8:16], 2)
 			val = self.registers.getValue(reg) >> imm
 			self.registers.setValue(reg, val)
+			self.prevPC = self.pc
 			self.pc += 1
 
 			self.resetFlag()
@@ -181,8 +188,12 @@ class Simulator:
 			reg = int(instruction[5:8], 2)
 			imm = int(instruction[8:16], 2)
 			val = self.registers.getValue(reg) << imm
+			val %= 65535
+
 			self.registers.setValue(reg, val)
+			self.prevPC = self.pc
 			self.pc += 1
+
 
 			self.resetFlag()
 
@@ -195,6 +206,7 @@ class Simulator:
 			val = self.registers.getValue(regB) ^ self.registers.getValue(regC)
 
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 
 			self.resetFlag()
@@ -208,6 +220,7 @@ class Simulator:
 			val = self.registers.getValue(regB) | self.registers.getValue(regC)
 
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 
 			self.resetFlag()
@@ -221,6 +234,7 @@ class Simulator:
 			val = self.registers.getValue(regB) & self.registers.getValue(regC)
 
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 
 			self.resetFlag()
@@ -232,6 +246,7 @@ class Simulator:
 
 			val = ~self.registers.getValue(regB) & (2**16 - 1)
 			self.registers.setValue(regA, val)
+			self.prevPC = self.pc
 			self.pc += 1
 
 			self.resetFlag()
@@ -250,16 +265,19 @@ class Simulator:
 				self.registers.setValue(7, 2)
 			else:
 				self.registers.setValue(7, 4)
+			self.prevPC = self.pc
 			self.pc += 1
 
 		#UNCONDITIONAL JUMP
 		if opCode == 15:
+			self.prevPC = self.pc
 			addr = int(instruction[8:16], 2)
 			self.pc = addr
 			self.resetFlag()
 
 		#LT JUMP
 		if opCode == 16:
+			self.prevPC = self.pc
 			if self.registers.getValue(7) == 4:
 				addr = int(instruction[8:16], 2)
 				self.pc = addr
@@ -269,6 +287,7 @@ class Simulator:
 			
 		#GT JUMP
 		if opCode == 17:
+			self.prevPC = self.pc
 			if self.registers.getValue(7) == 2:
 				addr = int(instruction[8:16], 2)
 				self.pc = addr
@@ -278,6 +297,7 @@ class Simulator:
 
 		#EQ JUMP
 		if opCode == 18:
+			self.prevPC = self.pc
 			if self.registers.getValue(7) == 1:
 				addr = int(instruction[8:16], 2)
 				self.pc = addr
@@ -287,13 +307,14 @@ class Simulator:
 
 		#HLT
 		if opCode == 19:
+			self.prevPC = self.pc
 			self.resetFlag()
 			self.isHalted = True
 			self.pc += 1
 
 
 	def printLine(self):
-		print(f'{(self.pc - 1):08b} ',end='')
+		print(f'{(self.prevPC):08b} ',end='')
 		for i in range(self.registers.getLength()):
 			print(f'{self.registers.getValue(i):016b} ', end = '')
 		print()
@@ -311,7 +332,7 @@ class Simulator:
 		vecX = []
 		for i in range(len(self.pcVector)):
 			vecX.append(i)
-		plt.plot(vecX, self.pcVector)
+		plt.scatter(vecX, self.pcVector)
 		plt.show()
 		
 
@@ -323,5 +344,5 @@ def main():
 	sim.run(input_lines)
 	sim.printPlot()
 	
-
-main()
+if __name__=='__main__':
+	main()
