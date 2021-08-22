@@ -51,9 +51,13 @@ class Simulator:
 			self.memory.write(i, input_lines[i])
 
 		while (not self.isHalted):
-			self.pcVector.append(self.pc)
+			
 			instruction = self.memory.read(self.pc)
-			self.execute(instruction)
+			x = self.execute(instruction)
+			if x:
+				self.pcVector += [[self.prevPC, x]]
+			else :
+				self.pcVector += [[self.prevPC]]
 			self.printLine()
 
 
@@ -128,6 +132,7 @@ class Simulator:
 			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
+			return memAddress
 
 		# STORE
 		if opCode == 5:
@@ -137,6 +142,7 @@ class Simulator:
 			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
+			return memAddress
 
 		# MUL
 		if opCode == 6:
@@ -332,7 +338,9 @@ class Simulator:
 		vecX = []
 		for i in range(len(self.pcVector)):
 			vecX.append(i)
-		plt.scatter(vecX, self.pcVector)
+		for i in range(len(self.pcVector)):
+			for j in range(len(self.pcVector[i])):
+				plt.plot([vecX[i]], [self.pcVector[i][j]], marker = 'o', mec = 'c', mfc = 'c')
 		plt.show()
 		
 
@@ -340,6 +348,7 @@ def main():
 	input_lines = os.read(0, 10**6).strip().splitlines() 
 	for x in range(len(input_lines)):
 		input_lines[x] = input_lines[x].decode("utf-8")
+
 	sim = Simulator()
 	sim.run(input_lines)
 	sim.printPlot()
