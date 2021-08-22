@@ -128,7 +128,8 @@ class Simulator:
 		if opCode == 4:
 			regA = int(instruction[5:8], 2)
 			memAddress = int(instruction[8:16], 2)
-			self.registers.setValue(regA, self.memory.read(memAddress))
+			memVal = int(self.memory.read(memAddress),2)
+			self.registers.setValue(regA, memVal)
 			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
@@ -138,7 +139,8 @@ class Simulator:
 		if opCode == 5:
 			regA = int(instruction[5:8], 2)
 			memAddress = int(instruction[8:16], 2)
-			self.memory.write(memAddress, self.registers.getValue(regA))
+			binVal = f'{self.registers.getValue(regA):016b}'
+			self.memory.write(memAddress, binVal)
 			self.prevPC = self.pc
 			self.pc += 1
 			self.resetFlag()
@@ -328,19 +330,13 @@ class Simulator:
 	def memoryDump(self):
 		for i in range(self.memory.getSize()):
 			x = self.memory.read(i)
-			if len(str(x)) == 16:
-				print(str(x))
-			else:
-				print(f'{int(x):016b}')
+			print(str(x))
 
 	def printPlot(self):
 		#...
-		vecX = []
-		for i in range(len(self.pcVector)):
-			vecX.append(i)
 		for i in range(len(self.pcVector)):
 			for j in range(len(self.pcVector[i])):
-				plt.plot([vecX[i]], [self.pcVector[i][j]], marker = 'o', mec = 'c', mfc = 'c')
+				plt.plot([i], [self.pcVector[i][j]], marker = 'o', mec = 'c', mfc = 'c')
 		plt.show()
 		
 
