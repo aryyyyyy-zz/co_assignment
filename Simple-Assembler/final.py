@@ -70,6 +70,7 @@ def handle_a(cmd, n): #cmd = ["sub", "R1", "R2", "R3"]
 
 def handle_mov(cmd, n): #mov R1 #imm | mov R1 R2 | mov R1 FLAGS
 	ans = ""
+
 	global indices
 
 	if cmd[2][0] == '$':
@@ -158,8 +159,9 @@ instruction=[]
 for x in range(len(input_lines)):
 	line = input_lines[x].decode('utf-8') 
 	lines.append(line)
+
 	
-   
+
 #--------------------------------------------- MAKING VARIABLE AND LABEL LIST --------------------------------------
 
 indices = [] #indices of non-empty lines
@@ -174,10 +176,13 @@ while lines.count("") != 0 :
 index = 0
 for line in lines:
 
-	line = line.split(' ')
+	line = line.split(" ")
 	string = "\t".join(line)
 	line = string.split('\t')
-		
+
+	while line.count("") != 0:
+		line.remove("")
+
 	if line[0] == 'var':
 		if len(line) != 2:
 			print("Line", indices[index], ":", errors['j'])
@@ -218,6 +223,8 @@ if not (1 <= len(indices) <= 256) :
 	quit()
 
 for line in lines:
+	while line.count("") != 0:
+		line.remove("")
 
 	# A COMMANDS
 	if line[0] in a_commands.keys():

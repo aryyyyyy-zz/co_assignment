@@ -129,6 +129,7 @@ class Simulator:
 			regA = int(instruction[5:8], 2)
 			memAddress = int(instruction[8:16], 2)
 			memVal = int(self.memory.read(memAddress),2)
+			
 			self.registers.setValue(regA, memVal)
 			self.prevPC = self.pc
 			self.pc += 1
@@ -140,6 +141,7 @@ class Simulator:
 			regA = int(instruction[5:8], 2)
 			memAddress = int(instruction[8:16], 2)
 			binVal = f'{self.registers.getValue(regA):016b}'
+
 			self.memory.write(memAddress, binVal)
 			self.prevPC = self.pc
 			self.pc += 1
@@ -341,7 +343,7 @@ class Simulator:
 		
 
 def main():
-	input_lines = os.read(0, 10**6).strip().splitlines() 
+	input_lines = os.read(0, 10**6).strip().splitlines()
 	for x in range(len(input_lines)):
 		input_lines[x] = input_lines[x].decode("utf-8")
 
